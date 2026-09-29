@@ -247,7 +247,7 @@ ALU: PASO - 1036 casos verificados
 --------------------------------------------
 ```
 
-![Simulación de la ALU en GTKWave](sim/Gtkwave_alu.png)
+![Simulación de la ALU en GTKWave](Lab002/sim/Gtkwave_alu.png)
 
 **Comportamiento observado:**
 
@@ -280,7 +280,7 @@ DATAPATH: PASO
 ```
 
 
-![Simulación del datapath en GTKWave](sim/Gtkwave_Datapath.png)
+![Simulación del datapath en GTKWave](Lab002/sim/Gtkwave_Datapath.png)
 
 | Tramo | Botón (`BTNS`) | Acción | `C` | `LED` | RGB |
 |---|---|---|---|---|---|
@@ -303,7 +303,7 @@ En la simulación se observa que:
 
 **Detalle del rebote:**
 
-![Rebote de BTN2 y muestreo](sim/Rebote.png)
+![Rebote de BTN2 y muestreo](Lab002/sim/Rebote.png)
 
 `BTNS` presenta 4 rebotes al presionar BTN2 y 4 al soltarlo, y `btn_s1` reproduce la misma forma 2 ciclos después (el sincronizador no filtra el rebote, solo evita la metaestabilidad). Sin embargo, `C` cambia **una sola vez** (`00 → 01`), en el `tick` en que la muestra actual vale 1 y la anterior (`btn_m`) valía 0. Al soltar el botón, `btn_m` vuelve a `00` y `C` conserva su valor. En hardware, el muestreo cada 10 ms cumple la misma función, porque es un intervalo mayor que la duración del rebote.
 
