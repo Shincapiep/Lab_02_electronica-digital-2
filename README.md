@@ -243,8 +243,6 @@ A=15 B=1 OP=01 -> OUTT=1110 (14)
 A=15 B=1 OP=10 -> OUTT=0001 (1)
 A=15 B=1 OP=11 -> OUTT=1111 (15)
 --------------------------------------------
-ALU: PASO - 1036 casos verificados
---------------------------------------------
 ```
 
 ![Simulación de la ALU en GTKWave](Lab002/sim/Gtkwave_alu.png)
