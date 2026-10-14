@@ -1,4 +1,4 @@
-# Laboratorio 03: ALU + Banco de Registros + Diseño Modular
+# Laboratorio 03: ALU + Banco de Registros
 
 - **Asignatura:** Electrónica Digital II
 - **Semestre:** 2026-2
@@ -21,22 +21,21 @@
 6. [Asignación de pines](#6-asignación-de-pines)
 7. [Simulación](#7-simulación)
 8. [Implementación y verificación en FPGA](#8-implementación-y-verificación-en-fpga)
-9. [Análisis de resultados](#9-análisis-de-resultados)
-10. [Conclusiones](#10-conclusiones)
+9. [Conclusiones](#9-conclusiones)
 
 ---
 
 ## 1. Descripción del sistema
 
-El sistema implementa en la Zybo Z7 un pequeño datapath formado por un **banco de 4 registros de 4 bits** (R0–R3), una **ALU de 4 bits con 8 operaciones**, un **selector automático de pares de operandos** y un **display de 7 segmentos TM1637** que muestra el resultado.
+El sistema implementa en la Zybo Z7 un pequeño datapath formado por un banco de 4 registros de 4 bits (R0–R3), una ALU de 4 bits con 8 operaciones, un selector automático de pares de operandos y un display de 7 segmentos TM1637 que muestra el resultado.
 
 El flujo de uso es:
 
-1. Se elige el registro de destino con **BTN0** (el LED RGB indica cuál está seleccionado).
-2. Se coloca un valor en los switches y se escribe en ese registro con **BTN1**.
-3. Con **BTN2** se recorren los pares de registros que servirán como operandos A y B (los LEDs LD0–LD3 indican cuáles participan).
-4. Se coloca el código de operación en `SW[2:0]` y se presiona **BTN3**: la ALU ejecuta la operación y el resultado se guarda.
-5. El display muestra el resultado de la **última operación ejecutada** y lo conserva hasta la siguiente pulsación de BTN3, aunque cambien los switches, los operandos o el par seleccionado.
+1. Se elige el registro de destino con BTN0 (el LED RGB indica cuál está seleccionado).
+2. Se coloca un valor en los switches y se escribe en ese registro con BTN1.
+3. Con BTN2 se recorren los pares de registros que servirán como operandos A y B (los LEDs LD0–LD3 indican cuáles participan).
+4. Se coloca el código de operación en `SW[2:0]` y se presiona BTN3: la ALU ejecuta la operación y el resultado se guarda.
+5. El display muestra el resultado de la última operación ejecutada y lo conserva hasta la siguiente pulsación de BTN3, aunque cambien los switches, los operandos o el par seleccionado.
 
 ---
 
@@ -90,7 +89,7 @@ Indica el registro seleccionado para escritura:
 
 ## 3. Arquitectura modular
 
-El diseño se dividió en módulos con una sola responsabilidad cada uno. El módulo superior `top.v` **no contiene lógica propia**: solo declara las señales internas, instancia los módulos y los conecta.
+El diseño se dividió en módulos con una sola responsabilidad cada uno. El módulo superior `top.v` no contiene lógica propia: solo declara las señales internas, instancia los módulos y los conecta.
 
 | Módulo | Tipo de lógica | Responsabilidad |
 |---|---|---|
@@ -109,9 +108,9 @@ Las señales recorren el sistema en este orden:
 2. `comb_selector` entrega las direcciones `addr_a` y `addr_b`, con las que `reg_bank` lee los operandos `data_a` y `data_b`.
 3. La `alu` opera continuamente sobre `data_a`, `data_b` y `SW[2:0]`.
 4. `exec_unit` captura el resultado de la ALU solo cuando llega `btn3_p` y lo pasa a `display_tm1637`.
-5. `exec_unit` también controla la escritura del banco: con `btn1_p` escribe los switches, y con `btn3_p` puede escribir el resultado (sección 4.6).
+5. `exec_unit` también controla la escritura del banco: con `btn1_p` escribe los switches, y con `btn3_p` puede escribir el resultado.
 
-Todos los tiempos que dependen del reloj (antirrebote y velocidad del bus del display) son **parámetros** del `top`. En síntesis se usan los valores reales; en simulación se reducen para que las pruebas duren microsegundos en lugar de segundos.
+Todos los tiempos que dependen del reloj (antirrebote y velocidad del bus del display) son parámetros del `top`. En síntesis se usan los valores reales; en simulación se reducen para que las pruebas duren microsegundos en lugar de segundos.
 
 ---
 
@@ -146,7 +145,7 @@ El módulo usa `always @(*)`, no tiene reloj ni registros, y todas las ramas del
 
 ### 4.3 `comb_selector.v`: selector de operandos
 
-Genera las **6 combinaciones de pares sin repetición** de los 4 registros:
+Genera las 6 combinaciones de pares sin repetición de los 4 registros:
 
 $$\binom{4}{2} = \frac{4!}{2!\,2!} = 6$$
 
@@ -162,9 +161,9 @@ En cada par, A siempre es el registro de menor índice. Por eso la resta se calc
 
 Cada botón pasa por tres etapas:
 
-1. **Sincronizador de 2 flip-flops**, porque los botones son asíncronos respecto al reloj y pueden causar metaestabilidad.
-2. **Filtro de rebote:** un cambio de nivel solo se acepta si se mantiene durante `N_CYCLES` ciclos seguidos; si el botón rebota, el contador se reinicia.
-3. **Detector de flanco:** cuando se confirma la transición de 0 a 1, `btn_pulse` vale 1 durante **un solo ciclo**.
+1. Sincronizador de 2 flip-flops, porque los botones son asíncronos respecto al reloj y pueden causar metaestabilidad.
+2. Filtro de rebote: un cambio de nivel solo se acepta si se mantiene durante `N_CYCLES` ciclos seguidos; si el botón rebota, el contador se reinicia.
+3. Detector de flanco: cuando se confirma la transición de 0 a 1, `btn_pulse` vale 1 durante **un solo ciclo**.
 
 Con el valor por defecto, el tiempo de filtrado es:
 
@@ -180,7 +179,7 @@ Un contador de 2 bits que avanza con cada pulso de BTN0 (R0 → R1 → R2 → R3
 
 Cumple dos funciones:
 
-**a) Árbitro de escritura del banco**
+a) Árbitro de escritura del banco
 
 | Evento | `write_enable` | Dirección | Dato |
 |---|---|---|---|
@@ -190,7 +189,7 @@ Cumple dos funciones:
 
 Las operaciones de un solo operando se escriben de vuelta en el registro A para que sean **acumulativas**: presionar BTN3 varias veces con ROL sigue rotando el mismo registro, y NOT dos veces devuelve el valor original. Las operaciones de dos operandos no modifican los registros. Como NOT, ROL y ROR siempre producen resultados de 4 bits, el valor escrito cabe en el registro sin pérdida.
 
-**b) Registro del resultado**
+b) Registro del resultado
 
 ```verilog
 always @(posedge clk) begin
@@ -207,10 +206,10 @@ end
 
 `display_tm1637` es el módulo de visualización que pide la guía; internamente instancia `tm1637_driver`, que hace dos cosas:
 
-1. **Conversión del resultado** a los 4 dígitos según la operación (sección 5).
-2. **Comunicación con el TM1637** mediante una máquina de estados que genera el protocolo de 2 hilos (CLK y DIO).
+1. Conversión del resultado a los 4 dígitos según la operación.
+2. Comunicación con el TM1637 mediante una máquina de estados que genera el protocolo de 2 hilos (CLK y DIO).
 
-El protocolo del TM1637 es parecido a I²C, pero sin dirección de dispositivo y con los datos **LSB primero**. Cada refresco envía tres transacciones:
+El protocolo del TM1637 es parecido a I²C, pero sin dirección de dispositivo y con los datos LSB primero. Cada refresco envía tres transacciones:
 
 | Transacción | Bytes | Significado |
 |---|---|---|
@@ -234,12 +233,12 @@ El display tiene 4 dígitos. La representación depende del tipo de operación, 
 
 | Operaciones | Representación | Dígito 3 | Dígito 2 | Dígito 1 | Dígito 0 |
 |---|---|---|---|---|---|
-| ADD, SUB, AND, OR, XOR | **Decimal** | Signo (`-` o apagado) | Decenas | Unidades | Código de la operación (0 a 4) |
+| ADD, SUB, AND, OR, XOR | Decimal | Signo (`-` o apagado) | Decenas | Unidades | Código de la operación (0 a 4) |
 | NOT, ROL, ROR | **Binario** | Bit 3 | Bit 2 | Bit 1 | Bit 0 |
 
-**Decimal** para las operaciones aritméticas, porque su resultado es un número, y para AND, OR y XOR por consistencia con ellas. El último dígito muestra el código de la operación ejecutada, de modo que se puede saber qué se calculó sin mirar los switches, que pudieron haber cambiado después de presionar BTN3.
+Decimal para las operaciones aritméticas, porque su resultado es un número, y para AND, OR y XOR por consistencia con ellas. El último dígito muestra el código de la operación ejecutada, de modo que se puede saber qué se calculó sin mirar los switches, que pudieron haber cambiado después de presionar BTN3.
 
-**Binario** para NOT y las rotaciones, porque son operaciones sobre la posición de los bits; en decimal no se notaría que $0101 \to 1010$ es una rotación.
+Binario para NOT y las rotaciones, porque son operaciones sobre la posición de los bits; en decimal no se notaría que $0101 \to 1010$ es una rotación.
 
 La interpretación del resultado de 5 bits cambia según la operación:
 
@@ -253,7 +252,7 @@ Por ejemplo, para $3 - 8$ el resultado es $11011_2$. Como el bit 4 es 1, la magn
 
 La conversión a decenas y unidades se hace con una tabla de búsqueda (0 a 30), sin divisiones, para que la síntesis sea sencilla.
 
-**Ejemplos:**
+## Ejemplos:
 
 | Operación | Resultado guardado | Display |
 |---|---|---|
@@ -280,13 +279,11 @@ La conversión a decenas y unidades se hace con una tabla de búsqueda (0 a 30),
 
 El módulo TM1637 se alimenta desde el mismo Pmod JE: VCC en el pin 6 (3.3 V) y GND en el pin 5.
 
-Se usa el LED RGB **LD6**, porque el LD5 solo existe en la Zybo Z7-20 y la tarjeta del laboratorio es la Z7-10 (`xc7z010clg400-1`). DIO se configura con *pull-up* porque durante el pulso de ACK el driver deja la línea en alta impedancia.
-
 ---
 
 ## 7. Simulación
 
-Cada módulo se probó por separado y luego se probó el sistema completo con el `top.v` real. Todos los testbenches son **autoverificables**: comparan cada resultado con el valor esperado e imprimen `PASO` o `FALLO`.
+Cada módulo se probó por separado y luego se probó el sistema completo con el `top.v` real: comparan cada resultado con el valor esperado e imprimen `PASO` o `FALLO`.
 
 | Testbench | Módulo bajo prueba | Qué verifica |
 |---|---|---|
@@ -306,8 +303,7 @@ En simulación se usan valores reducidos de los parámetros:
 | `TM_BIT_HZ` | 10 kHz | 6.25 MHz |
 | `TM_REFRESH_TICKS` | 2000 | 50 |
 
-**Ejecución** (desde la carpeta `sim/`):
-
+Ejecución 
 ```bash
 iverilog -g2005 -o s_alu  tb_alu.v ../src/alu.v
 iverilog -g2005 -o s_rb   tb_reg_bank.v ../src/reg_bank.v
@@ -409,7 +405,7 @@ COMB_SELECTOR: PASO
 
 ```
 =============================================
-  SISTEMA COMPLETO: PASO (0 errores)
+  SISTEMA COMPLETO: PASO 
 =============================================
 ```
 
@@ -431,16 +427,4 @@ En la prueba T6 se observa que `alu_result` cambia cada vez que cambian los oper
 
 ---
 
-## 9. Análisis de resultados
-
-- **Separación entre cálculo y visualización.** La ALU calcula de forma continua y su salida cambia con cualquier entrada, pero el display no la recibe directamente: recibe `result_lat`, que solo se actualiza con BTN3. La prueba T6 muestra las dos señales lado a lado y confirma que el requisito de conservar el último resultado se cumple por construcción, no por la forma de usar los botones.
-- **Salida de 5 bits.** Ampliar la salida de la ALU a 5 bits permitió mostrar sumas hasta 30 y restas negativas con su signo. Con 4 bits, $15 + 15$ se vería como 14 y $3 - 8$ como 11.
-- **Visualización según la operación.** Mostrar NOT y las rotaciones en binario hace evidente el movimiento de los bits (por ejemplo, $0101 \to 1010$ con ROL), mientras que en decimal se vería como $5 \to 10$ sin relación aparente.
-- **Operaciones acumulativas.** Escribir el resultado de NOT, ROL y ROR en el registro A permite aplicarlas varias veces seguidas. La simulación confirma que NOT invierte el registro ($1010 \to 0101$) y que una rotación a la izquierda seguida de una a la derecha devuelve el valor original ($0101 \to 1010 \to 0101$).
-- **Pares sin orden.** Con 6 pares sin repetición, la resta siempre es R(menor) − R(mayor). Es una limitación aceptada a cambio de recorrer menos combinaciones con BTN2 (6 en lugar de 12).
-- **Verificación del bus.** El modelo `tm1637_monitor` permitió comprobar en simulación los bytes que llegan al display, incluido el orden de los dígitos y el signo, antes de conectar el módulo físico.
-- **Parametrización.** Los mismos archivos se usan en síntesis y en simulación; solo cambian los parámetros de tiempo. Así el sistema simulado es exactamente el que se programa en la tarjeta.
-
----
-
-## 10. Conclusiones
+## 9. Conclusiones
