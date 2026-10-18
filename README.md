@@ -316,7 +316,7 @@ La implementación del sistema se verificó en la tarjeta FPGA Zybo Z7 mediante 
 
 #### Prueba 1. Prueba general de la ALU
 
-En esta grabación se presenta una prueba de funcionamiento de la ALU implementada en la FPGA.
+En esta grabación se presentamos una prueba de funcionamiento de la ALU implementada en la FPGA.
 
 [Ver video: Prueba de la ALU](Lab002/evidencias/PruebaALU.mp4)
 
@@ -335,3 +335,17 @@ Esta prueba documenta el comportamiento de la ALU ante una operación cuyo resul
 ---
 
 ## 10. Conclusiones
+
+1. **Diseño e implementación de la ALU:** Se desarrolló una unidad aritmético-lógica (ALU) de 4 bits en Verilog, capaz de realizar las operaciones de suma, resta, AND y OR mediante un código de operación de dos bits. La implementación permitió aplicar los conceptos de diseño digital y describir el comportamiento del circuito mediante un lenguaje de descripción de hardware.
+
+2. **Diferenciación entre lógica combinacional y secuencial:** La separación entre los módulos `ALU.v` y `datapath.v` permitió distinguir las funciones de procesamiento de datos de los mecanismos de almacenamiento y control. Mientras la ALU calcula el resultado en función de sus entradas actuales, los registros del módulo superior conservan los operandos y el código de operación hasta que se produce una nueva carga o modificación. Esta organización facilita la comprensión, verificación y reutilización de los módulos.
+
+3. **Verificación funcional mediante simulación:** Las pruebas realizadas con Icarus Verilog y GTKWave permitieron comprobar las cuatro operaciones de la ALU, realizando varias combinaciones de operandos de 4 bits para cada operación. Asimismo, las pruebas del sistema completo permitieron observar la conservación de los registros, la actualización del resultado y la correspondencia entre el código de operación y las salidas del LED RGB.
+
+4. **Representación de resultados y límites de 4 bits:** Las pruebas de suma y resta permitieron analizar las limitaciones de representar los resultados con únicamente cuatro bits. En particular, se comprobó que la suma de 15 y 1 produce `0000` cuando se descarta el acarreo, mientras que la resta de 3 menos 5 produce `1110`, representación de −2 en complemento a dos de 4 bits. Estos casos evidencian la importancia de considerar el ancho de los datos y su interpretación al diseñar circuitos aritméticos.
+
+5. **Control de entradas físicas y selección de operaciones:** La utilización de los botones para cargar los operandos y modificar el código de operación permitió implementar una interfaz sencilla entre el usuario y el circuito. El sincronizador de entradas y el muestreo periódico utilizado para detectar las pulsaciones de los botones contribuyeron al control de las señales asíncronas y a la reducción de detecciones múltiples en las condiciones de rebote evaluadas. La simulación permitió analizar este comportamiento antes de su comprobación en hardware.
+
+6. **Integración y verificación en FPGA:** La implementación en la tarjeta Zybo Z7 permitió trasladar el diseño descrito en Verilog a un sistema digital físico, utilizando los switches como entradas, los botones como elementos de control, los LEDs como visualización del resultado y el LED RGB como indicador de la operación seleccionada. Las evidencias de hardware complementan las simulaciones y permiten contrastar el comportamiento esperado con el funcionamiento observable del circuito.
+
+En conjunto, la práctica permitió integrar el diseño modular en Verilog, la simulación funcional y la implementación en FPGA, destacando la importancia de verificar tanto las operaciones combinacionales como el comportamiento secuencial del sistema. Además, evidenció que una descripción correcta del circuito debe acompañarse de pruebas que contemplen diferentes combinaciones de entrada, los límites de representación numérica y el comportamiento de las señales de control.
