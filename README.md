@@ -312,6 +312,25 @@ En la simulación se observa que:
 ## 9. Implementación y verificación en FPGA
 
 ### 9.1 Verificación en hardware
+La implementación del sistema se verificó en la tarjeta FPGA Zybo Z7 mediante la manipulación de los switches y botones físicos. A continuación, se presentan las evidencias audiovisuales de las pruebas realizadas.
+
+#### Prueba 1. Prueba general de la ALU
+
+En esta grabación se presenta una prueba de funcionamiento de la ALU implementada en la FPGA.
+
+[Ver video: Prueba de la ALU](Lab002/evidencias/PruebaALU.mp4)
+
+#### Prueba 2. Complemento a dos
+
+En esta prueba se presenta el comportamiento de la ALU con números representados en complemento a dos.
+
+[Ver video: Complemento a dos](Lab002/evidencias/Complemento2.mp4)
+
+#### Prueba 3. Desbordamiento (*overflow*)
+
+Esta prueba documenta el comportamiento de la ALU ante una operación cuyo resultado excede el rango representable con 4 bits.
+
+[Ver video: Desbordamiento (*overflow*)](Lab002/evidencias/overflow.mp4)
 
 ---
 
