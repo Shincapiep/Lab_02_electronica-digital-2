@@ -37,6 +37,8 @@ El sistema implementa en la Zybo Z7 una ALU de 4 bits cuyos operandos se ingresa
 5. El **LED RGB** indica con un color la operación seleccionada.
 
 Una vez cargados, los operandos no cambian aunque se muevan los switches, y la operación no cambia aunque se suelten los botones. Solo una nueva carga o una nueva pulsación modifica el estado.
+Ejemplo, si coloco el numero 1011 en la entrada y lo cargo en el registro A, si luego lo cambio a 1000, este nose modificará hasta guardarlo nuevamente en el registro A. Para el caso de la opreación los botones matienen el estado y se modifican como un flip flop tipo T, de forma que si lo presiono una vez y estaba en cero, cambia a uno, y si lo vuelvo a presionar, cambia a cero; de forma que si tengo la operacion 01 y presiono el 'BTN3' se cambia a 00 la operación.
+
 
 ---
 
